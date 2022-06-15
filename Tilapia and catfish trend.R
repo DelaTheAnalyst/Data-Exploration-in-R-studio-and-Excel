@@ -1,0 +1,271 @@
+library(dplyr)
+library(tidyverse)
+
+DATA_WEEK_2022 <- read.csv("C:/Users/DELALI/Desktop/uncle Doe/DATA-WEEK 2022.csv")
+Cat_fish<- read.csv("C:/Users/DELALI/Desktop/uncle Doe/catfish data 2022.csv")
+#View(Cat_for_2022)
+colnames(DATA_WEEK_2022)<-colnames(DATA_WEEK_2022)[2]
+
+Data_for_2022<-data.frame(DATA_WEEK_2022)
+Cat_for_2022<- data.frame(Cat_fish)
+#view(Data_)
+#rename(Data_for_2022,X1=MARKET/LOCATION,X2 =WEEK, X3=S3(700-900grams),X4 =S2(500-700grams), )
+
+colnames(Data_for_2022)<-Data_for_2022[1,]
+Data_for_2022<-Data_for_2022[-1,]
+
+colnames(Cat_for_2022)<-Cat_for_2022[1,]
+Cat_for_2022<-Cat_for_2022[-1,]
+
+Data_T<-data.frame(Data_for_2022)
+Data_CAT<-data.frame(Cat_for_2022)
+
+Data_T$WEEK<- as.numeric(as.character(Data_T$WEEK))
+Data_T$S3.700.900grams.<- as.numeric(as.character(Data_T$S3.700.900grams.))
+Data_T$S2.500.700grams.<- as.numeric(as.character(Data_T$S2.500.700grams.))
+Data_T$S1.400.500grams.<- as.numeric(as.character(Data_T$S1.400.500grams.))
+Data_T$REG.300.400grams.<- as.numeric(as.character(Data_T$REG.300.400grams.))
+Data_T$ECO.250.300grams.<- as.numeric(as.character(Data_T$ECO.250.300grams.))
+#CATFISH
+Data_CAT$WEEK<- as.numeric(as.character(Data_CAT$WEEK))
+Data_CAT$X1KG<- as.numeric(as.character(Data_CAT$X1KG))
+#View(Data_CAT)
+sapply(Data_CAT,class)
+
+#S3
+The_mean1<-Data_T%>%
+  group_by(WEEK)%>%
+  filter(WEEK > 0)%>%
+  select(WEEK,S3.700.900grams.)%>%
+ summarise(mean_Tilapia_1 = mean(S3.700.900grams.))
+
+#S2
+The_mean2<-Data_T%>%
+  group_by(WEEK)%>%
+  filter(WEEK > 0)%>%
+  select(WEEK,S2.500.700grams.)%>%
+  summarise(mean_Tilapia_2 = mean(S2.500.700grams.))
+
+
+#S1
+The_mean3<-Data_T%>%
+  group_by(WEEK)%>%
+  filter(WEEK > 0)%>%
+  select(WEEK,S1.400.500grams.)%>%
+  summarise(mean_Tilapia_3 = mean(S1.400.500grams.))
+
+
+
+
+#REG
+The_mean4<-Data_T%>%
+  group_by(WEEK)%>%
+  filter(WEEK > 0)%>%
+  select(WEEK,REG.300.400grams.)%>%
+  summarise(mean_Tilapia_4 = mean(REG.300.400grams.))
+
+#ECO
+
+The_mean5<-Data_T%>%
+  group_by(WEEK)%>%
+  filter(WEEK > 0)%>%
+  select(WEEK,ECO.250.300grams.)%>%
+  summarise(mean_Tilapia_5 = mean(ECO.250.300grams.))
+
+
+#CATFISH
+The_mean_CAT<-Data_CAT%>%
+  group_by(WEEK)%>%
+  filter(WEEK > 0)%>%
+  select(WEEK,X1KG)%>%
+  summarise(mean_CATFISH_1 = mean(X1KG))
+
+
+
+View(combined_means5)
+
+
+#Combined means 
+combined_means1<-merge(The_mean1,The_mean2, by ="WEEK" )
+combined_means2<-merge(combined_means1,The_mean3, by ="WEEK" )
+combined_means3<-merge(combined_means2,The_mean4, by ="WEEK" )
+combined_means4<-merge(combined_means3,The_mean5, by ="WEEK" )
+combined_means5<-merge(combined_means4,The_mean_CAT, by ="WEEK" )
+
+sapply(combined_means5,class)
+#Plotting on a graph
+
+export(combined_means5,"EX_excel_file.xlsx",rowNames = F)
+#export(combined_means5,"EX_excel_file.xlsx",rowNames = F)
+
+#combined_means5$WEEK<-as.character(combined_means5$WEEK)
+
+Trend<-ggplot()+theme_bw()+
+   geom_line(data = combined_means5 ,mapping = aes(combined_means5$WEEK,combined_means5$mean_Tilapia_1),colour = "red")+
+  geom_point(data = combined_means5 ,mapping = aes(combined_means5$WEEK,combined_means5$mean_Tilapia_1),colour = "red")+
+  
+   geom_line(data = combined_means5 ,mapping = aes(combined_means5$WEEK,combined_means5$mean_Tilapia_2),colour = "blue")+
+  geom_point(data = combined_means5 ,mapping = aes(combined_means5$WEEK,combined_means5$mean_Tilapia_2),colour = "blue")+
+  
+   geom_line(data = combined_means5 ,mapping = aes(combined_means5$WEEK,combined_means5$mean_Tilapia_3),colour = "orange")+
+  geom_point(data = combined_means5 ,mapping = aes(combined_means5$WEEK,combined_means5$mean_Tilapia_3),colour = "orange")+
+  
+    geom_line(data = combined_means5 ,mapping = aes(combined_means5$WEEK,combined_means5$mean_Tilapia_4),colour = "black")+
+  geom_point(data = combined_means5 ,mapping = aes(combined_means5$WEEK,combined_means5$mean_Tilapia_4),colour = "black")+
+
+  
+    geom_line(data = combined_means5 ,mapping = aes(combined_means5$WEEK,combined_means5$mean_Tilapia_5),colour = "green")+
+  geom_point(data = combined_means5 ,mapping = aes(combined_means5$WEEK,combined_means5$mean_Tilapia_5),colour = "green")+
+  
+  geom_line(data = combined_means5 ,mapping = aes(combined_means5$WEEK,combined_means5$mean_CATFISH_1),colour = "violet")+
+  geom_point(data = combined_means5 ,mapping = aes(combined_means5$WEEK,combined_means5$mean_CATFISH_1),colour = "violet")+
+  
+  labs(x= "WEEKS",y = "Prices GHC/KG", title = "First Quater 2022 Tilapia & Catfish weekly Ex-Farm Price Trend(GhC/Kg)")+
+  scale_color_manual(values = c("Tilapia 700-900g"= "red","Tilapia 500-700g"="blue","Tilapia 400-500g"="orange","Tilapia 300-400g"="black",
+                                "Tilapia 250-300g"="green","Catfish/Kg"="violet"))+
+  theme(legend.position = "bottom")
+
+Trend
+#  theme(legend.position   = "bottom")
+
+colnames(combined_means5)[colnames(combined_means5)%in% c("mean_Tilapia_1","mean_Tilapia_2","mean_Tilapia_3","mean_Tilapia_4","mean_Tilapia_5","mean_CATFISH_1")]<-
+  c("Tilapia 700-900g","Tilapia 500-700g","Tilapia 400-500g","Tilapia 300-400g","Tilapia 250-300g","Catfish/Kg")
+
+combined_means5$WEEK<-as.character(combined_means5$WEEK)
+sapply(combined_means5,class)
+quater_average_2022<-colMeans(combined_means5[,2:7])
+view(combined_means5)
+
+
+######For first quater of 2021
+
+data_til2021<- read.csv("C:/Users/DELALI/Desktop/uncle Doe/first quater 2021 tilapia.csv")
+data_Catfish2021<- read.csv("C:/Users/DELALI/Desktop/uncle Doe/First Quater 2021 catfish.csv")
+
+#View(Data_for_2021)
+
+Data_for_2021<-data.frame(data_til2021)
+Cat_for_2021<- data.frame(data_Catfish2021)
+
+
+Data_for_2021$WEEK<- as.numeric(as.character(Data_for_2021$WEEK))
+Data_for_2021$S3.700.900grams.<- as.numeric(as.character(Data_for_2021$S3.700.900grams.))
+Data_for_2021$S2.500.700grams.<- as.numeric(as.character(Data_for_2021$S2.500.700grams.))
+Data_for_2021$S1.400.500grams.<- as.numeric(as.character(Data_for_2021$S1.400.500grams.))
+Data_for_2021$REG.300.400grams.<- as.numeric(as.character(Data_for_2021$REG.300.400grams.))
+Data_for_2021$ECO.250.300grams.<- as.numeric(as.character(Data_for_2021$ECO.250.300grams.))
+#CATFISH
+Cat_for_2021$WEEK<- as.numeric(as.character(Cat_for_2021$WEEK))
+Cat_for_2021$X1KG<- as.numeric(as.character(Cat_for_2021$X1KG))
+
+
+#S3
+mean1<-Data_for_2021%>%
+  group_by(WEEK)%>%
+  filter(WEEK > 0)%>%
+  select(WEEK,S3.700.900grams.)%>%
+  summarise(Tilapia_1 = mean(S3.700.900grams.))
+
+#S2
+mean2<-Data_for_2021%>%
+  group_by(WEEK)%>%
+  filter(WEEK > 0)%>%
+  select(WEEK,S2.500.700grams.)%>%
+  summarise(Tilapia_2 = mean(S2.500.700grams.))
+
+
+#S1
+mean3<-Data_for_2021%>%
+  group_by(WEEK)%>%
+  filter(WEEK > 0)%>%
+  select(WEEK,S1.400.500grams.)%>%
+  summarise(Tilapia_3 = mean(S1.400.500grams.))
+
+
+
+
+#REG
+mean4<-Data_for_2021%>%
+  group_by(WEEK)%>%
+  filter(WEEK > 0)%>%
+  select(WEEK,REG.300.400grams.)%>%
+  summarise(Tilapia_4 = mean(REG.300.400grams.))
+
+#ECO
+
+mean5<-Data_for_2021%>%
+  group_by(WEEK)%>%
+  filter(WEEK > 0)%>%
+  select(WEEK,ECO.250.300grams.)%>%
+  summarise(Tilapia_5 = mean(ECO.250.300grams.))
+
+
+#CATFISH
+mean_CAT<-Cat_for_2021%>%
+  group_by(WEEK)%>%
+  filter(WEEK > 0)%>%
+  select(WEEK,X1KG)%>%
+  summarise(CATFISH_1 = mean(X1KG))
+
+#combined means 2021 first quater
+combined1<-merge(mean1,mean2, by ="WEEK" )
+combined2<-merge(combined1,mean3, by ="WEEK" )
+combined3<-merge(combined2,mean4, by ="WEEK" )
+combined4<-merge(combined3,mean5, by ="WEEK" )
+combined5<-merge(combined4,mean_CAT, by ="WEEK" )
+
+export(combined5,"EX2__excel_file.xlsx",rowNames = F)
+
+#ploting graph for first quater 2021
+Trend_2021<-ggplot()+theme_bw()+
+  geom_line(data = combined5 ,mapping = aes(combined5$WEEK,combined5$Tilapia_1),colour = "red")+
+  geom_point(data = combined5 ,mapping = aes(combined5$WEEK,combined5$Tilapia_1),colour = "red")+
+  
+  geom_line(data = combined5 ,mapping = aes(combined5$WEEK,combined5$Tilapia_2),colour = "blue")+
+  geom_point(data = combined5 ,mapping = aes(combined5$WEEK,combined5$Tilapia_2),colour = "blue")+
+  
+  geom_line(data = combined5 ,mapping = aes(combined5$WEEK,combined5$Tilapia_3),colour = "orange")+
+  geom_point(data = combined5 ,mapping = aes(combined5$WEEK,combined5$Tilapia_3),colour = "orange")+
+  
+  geom_line(data = combined5 ,mapping = aes(combined5$WEEK,combined5$Tilapia_4),colour = "black")+
+  geom_point(data = combined5 ,mapping = aes(combined5$WEEK,combined5$Tilapia_4),colour = "black")+
+  
+  
+  geom_line(data = combined5 ,mapping = aes(combined5$WEEK,combined5$Tilapia_5),colour = "green")+
+  geom_point(data = combined5 ,mapping = aes(combined5$WEEK,combined5$Tilapia_5),colour = "green")+
+  
+  geom_line(data = combined5 ,mapping = aes(combined5$WEEK,combined5$CATFISH_1),colour = "violet")+
+  geom_point(data = combined5 ,mapping = aes(combined5$WEEK,combined5$CATFISH_1),colour = "violet")+
+  
+  labs(x= "WEEKS",y = "Prices GHC/KG", title = "First Quater 2021 Tilapia & Catfish weekly Ex-Farm Price Trend(GhC/Kg)")
+
+Trend_2021
+
+colnames(combined5)[colnames(combined5)%in% c("Tilapia_1","Tilapia_2","Tilapia_3","Tilapia_4","Tilapia_5","CATFISH_1")]<-
+  c("Tilapia 700-900g","Tilapia 500-700g","Tilapia 400-500g","Tilapia 300-400g","Tilapia 250-300g","Catfish/Kg")
+
+combined5$WEEK<-as.character(combined5$WEEK)
+sapply(combined5,class)
+quater_average_2021<-colMeans(combined5[,2:7])
+
+
+####comparism 2022 and 2021
+Q_average<-cbind.data.frame(quater_average_2021,quater_average_2022)
+row.names(Q_average)<- c("Tilapia 700-900g","Tilapia 500-700g","Tilapia 400-500g","Tilapia 300-400g","Tilapia 250-300g","Catfish/Kg")
+colnames(Q_average)[colnames(Q_average)%in% c("quater_average_2021","quater_average_2022")]<-c("First Quater 2021","First Quater 2022")
+view(Q_average)
+library(openxlsx)
+library(rio)
+
+my_head<-createStyle(halign = "center",textDecoration = "Bold",
+                     fontSize = 12)
+export(Q_average,"2022_2021 Price trend.xlsx",rowNames = T)
+writes.csv(Q_average,"FARM PRICE TREND.csv",headerStyle = my_head,row.names = TRUE)
+##Plotting the graph
+Quartely_Trend<-ggplot()+theme_bw()+
+  geom_line(data = combined5 ,mapping = aes(combined5$WEEK,combined5$Tilapia_1),colour = "red")+
+  geom_point(data = combined5 ,mapping = aes(combined5$WEEK,combined5$Tilapia_1),colour = "red")+
+  
+  geom_line(data = combined5 ,mapping = aes(combined5$WEEK,combined5$Tilapia_2),colour = "blue")+
+  geom_point(data = combined5 ,mapping = aes(combined5$WEEK,combined5$Tilapia_2),colour = "blue")
+
